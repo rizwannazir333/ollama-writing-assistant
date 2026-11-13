@@ -1,5 +1,5 @@
 """
-Ollama Email & English Assistant (Part 1 of 3: plain Ollama, no framework)
+Ollama Writing Assistant (Part 1 of 3: plain Ollama, no framework)
    Drafts professional emails and corrects English grammar.
    Runs 100% on your computer with a 4-bit quantized model. No external API.
 
@@ -7,11 +7,11 @@ Quick by default. Add --think to see the model's THINKING live (grey);
 the RESULT is always printed in one piece at the end.
 
 Run:
-    python ollama_email_english.py                          # menu
-    python ollama_email_english.py email "ask boss for Friday off"
-    python ollama_email_english.py correct "he go to school yesterday"
-    python ollama_email_english.py --think correct "..."     # show thinking (slower)
-    python ollama_email_english.py -m llama3.2:3b ...        # pick a model
+    python ollama_writing_assistant.py                          # menu
+    python ollama_writing_assistant.py email "ask boss for Friday off"
+    python ollama_writing_assistant.py correct "he go to school yesterday"
+    python ollama_writing_assistant.py --think correct "..."     # show thinking (slower)
+    python ollama_writing_assistant.py -m llama3.2:3b ...        # pick a model
 """
 
 import os

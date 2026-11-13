@@ -1,8 +1,8 @@
-# Ollama Email & English Assistant
+# Ollama Writing Assistant
 
 **A private, offline AI writing assistant that drafts professional emails and corrects English grammar, built with plain Ollama in a single Python file.**
 
-[![CI](https://github.com/rizwannazir333/ollama-email-english/actions/workflows/ci.yml/badge.svg)](https://github.com/rizwannazir333/ollama-email-english/actions/workflows/ci.yml)
+[![CI](https://github.com/rizwannazir333/ollama-writing-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/rizwannazir333/ollama-writing-assistant/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![Ollama](https://img.shields.io/badge/Ollama-local%20LLM-000000)
 ![Model](https://img.shields.io/badge/model-qwen3.5%3A4b%20(Q4__K__M)-6E40C9)
@@ -10,7 +10,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 > **Series: Building the same AI app three ways**
-> **Part 1: Plain Ollama** (this repo) · [Part 2: LangChain](https://github.com/rizwannazir333/langchain-email-english) · [Part 3: LangGraph](https://github.com/rizwannazir333/langgraph-email-english)
+> **Part 1: Plain Ollama** (this repo) · [Part 2: LangChain](https://github.com/rizwannazir333/langchain-writing-assistant) · [Part 3: LangGraph](https://github.com/rizwannazir333/langgraph-writing-assistant)
 
 ---
 
@@ -52,7 +52,7 @@ what each framework adds.
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant A as ollama_email_english.py
+    participant A as ollama_writing_assistant.py
     participant O as Ollama (local)
     U->>A: "she dont like coffee"
     A->>O: system prompt (proofreader + examples) + user text
@@ -96,8 +96,8 @@ sequenceDiagram
 ollama pull qwen3.5:4b
 
 # 2. Clone the repository
-git clone https://github.com/rizwannazir333/ollama-email-english.git
-cd ollama-email-english
+git clone https://github.com/rizwannazir333/ollama-writing-assistant.git
+cd ollama-writing-assistant
 
 # 3. Create a virtual environment and install the dependency
 python -m venv .venv
@@ -108,7 +108,7 @@ python -m venv .venv
 ```
 
 > The script detects a `.venv` folder next to it and re-launches itself with that interpreter, so
-> `python ollama_email_english.py` works even without activating the environment.
+> `python ollama_writing_assistant.py` works even without activating the environment.
 
 ---
 
@@ -117,7 +117,7 @@ python -m venv .venv
 ### Interactive menu
 
 ```bash
-python ollama_email_english.py
+python ollama_writing_assistant.py
 ```
 
 ```
@@ -140,10 +140,10 @@ Changes:
 ### One-line commands
 
 ```bash
-python ollama_email_english.py email "ask my manager for Friday off for a family event"
-python ollama_email_english.py correct "me and him is going to meeting tomorow"
-python ollama_email_english.py --think correct "me and him is late"     # show reasoning
-python ollama_email_english.py -m llama3.2:3b correct "..."             # choose a model
+python ollama_writing_assistant.py email "ask my manager for Friday off for a family event"
+python ollama_writing_assistant.py correct "me and him is going to meeting tomorow"
+python ollama_writing_assistant.py --think correct "me and him is late"     # show reasoning
+python ollama_writing_assistant.py -m llama3.2:3b correct "..."             # choose a model
 ```
 
 ### Options
@@ -161,7 +161,7 @@ If no model is given, the first installed model from this list is used:
 
 ## Code Walkthrough
 
-The whole application lives in [`ollama_email_english.py`](ollama_email_english.py).
+The whole application lives in [`ollama_writing_assistant.py`](ollama_writing_assistant.py).
 
 **1. Prompts define behaviour.** Each task is just a different system prompt:
 
@@ -260,8 +260,8 @@ Ideas for learners who want to build on this project:
 ## Project Structure
 
 ```
-ollama-email-english/
-├── ollama_email_english.py     # the application
+ollama-writing-assistant/
+├── ollama_writing_assistant.py     # the application
 ├── requirements.txt            # pinned dependency
 ├── .gitignore                  # keeps .venv and caches out of Git
 ├── LICENSE                     # MIT License
@@ -274,9 +274,9 @@ ollama-email-english/
 
 | Part | Repository | What it adds |
 |---|---|---|
-| **1** | **ollama-email-english** (you are here) | Direct model access, prompting, streaming |
-| 2 | [langchain-email-english](https://github.com/rizwannazir333/langchain-email-english) | Prompt templates, chains, structured output, memory, tools, agents |
-| 3 | [langgraph-email-english](https://github.com/rizwannazir333/langgraph-email-english) | Graph workflows, self-review loops, human approval, parallelism, caching |
+| **1** | **ollama-writing-assistant** (you are here) | Direct model access, prompting, streaming |
+| 2 | [langchain-writing-assistant](https://github.com/rizwannazir333/langchain-writing-assistant) | Prompt templates, chains, structured output, memory, tools, agents |
+| 3 | [langgraph-writing-assistant](https://github.com/rizwannazir333/langgraph-writing-assistant) | Graph workflows, self-review loops, human approval, parallelism, caching |
 
 ---
 
@@ -292,4 +292,4 @@ project, including in your own courses and classrooms, as long as the copyright 
 Created and maintained by **[@rizwannazir333](https://github.com/rizwannazir333)**.
 
 If this project helped you learn, please consider giving it a ⭐. Questions, suggestions and
-improvements are welcome through [Issues](https://github.com/rizwannazir333/ollama-email-english/issues).
+improvements are welcome through [Issues](https://github.com/rizwannazir333/ollama-writing-assistant/issues).

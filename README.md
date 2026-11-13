@@ -1,62 +1,118 @@
-# Part 1: Local AI Writing Assistant with Plain Ollama
+# Ollama Email & English Assistant
 
-> **Series:** **Part 1: Ollama** · [Part 2: LangChain](https://github.com/rizwannazir333/langchain-email-english) · [Part 3: LangGraph](https://github.com/rizwannazir333/langgraph-email-english)
+**A private, offline AI writing assistant that drafts professional emails and corrects English grammar, built with plain Ollama in a single Python file.**
 
-Build an **email writer** and an **English grammar checker** that run **100% on your own computer**.
-No API key, no internet, no cost.
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
+![Ollama](https://img.shields.io/badge/Ollama-local%20LLM-000000)
+![Model](https://img.shields.io/badge/model-qwen3.5%3A4b%20(Q4__K__M)-6E40C9)
+![API](https://img.shields.io/badge/API%20key-not%20required-success)
 
-This is **Part 1** of a 3-part series. Here we use **plain Ollama** with no framework, so you can see
-exactly how a program talks to an AI model. In Parts 2 and 3 we build the *same app* with LangChain
-and LangGraph to see what those tools add.
-
-**What you will learn:**
-- How to run an AI model locally with Ollama
-- How to send **system** and **user** messages to a model
-- How to **stream** an answer and show the model's **thinking**
-- How **few-shot examples** in a prompt improve small models
+> **Series: Building the same AI app three ways**
+> **Part 1: Plain Ollama** (this repo) · [Part 2: LangChain](https://github.com/rizwannazir333/langchain-email-english) · [Part 3: LangGraph](https://github.com/rizwannazir333/langgraph-email-english)
 
 ---
 
-## 1. What you need
+## Overview
 
-- A computer with **8 GB RAM or more** (16 GB recommended). **No graphics card needed.**
-- **Python 3.10 or newer** ([python.org](https://www.python.org/downloads/))
-- **Ollama**, a free program that runs AI models on your computer ([ollama.com/download](https://ollama.com/download))
-- About **4 GB of free disk space** for the model
+I built this project to answer a question many students and developers ask: *what is the minimum code
+needed to build a useful AI application that runs entirely on your own machine?*
+
+The answer is about 140 lines of Python. This repository contains a command-line assistant that
+performs two everyday tasks:
+
+- **Email drafting:** turns a one-line request into a polite, professional email.
+- **English correction:** fixes grammar, spelling and tense, and explains every change.
+
+It talks directly to a locally running language model through the official `ollama` Python library,
+with **no framework, no cloud service and no API key**. Your text never leaves your computer.
+
+This is **Part 1** of a three-part series. Parts 2 and 3 rebuild the same application with
+**LangChain** and **LangGraph**, so the three repositories can be compared side by side to see exactly
+what each framework adds.
 
 ---
 
-## 2. Setup (10 minutes)
+## Key Features
 
-**Step 1: download the AI model.** After installing Ollama, open a terminal:
+- **100% local and private:** runs on Ollama, works offline, no data sent to third parties.
+- **CPU-friendly:** uses a 4-bit quantized 4B model (`qwen3.5:4b`, Q4_K_M) that runs on an ordinary laptop with no GPU.
+- **Two tasks, one function:** both tasks share the same request logic; only the system prompt changes.
+- **Few-shot prompting:** worked examples inside the prompt make a small model noticeably more accurate.
+- **Optional live reasoning:** with `--think`, the model's thinking streams live, and the final answer is printed in one piece.
+- **Fast by default:** small context window, capped output, model pre-loaded and kept in memory.
+- **Automatic model selection:** uses the first model you have installed from a preferred list.
+- **Interactive menu and one-line CLI:** use it conversationally or from scripts.
 
-```bash
-ollama pull qwen3.5:4b
-ollama list          # check it is installed
+---
+
+## How It Works
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant A as 1_ollama_email_english.py
+    participant O as Ollama (local)
+    U->>A: "she dont like coffee"
+    A->>O: system prompt (proofreader + examples) + user text
+    O-->>A: streamed chunks (thinking + answer)
+    A-->>U: thinking shown live (optional)
+    A-->>U: ===== RESULT ===== (complete answer)
 ```
 
-**Step 2: get the code.**
+1. The user picks a task and enters text.
+2. The script builds a **system message** (the model's role and rules) and a **user message** (the input).
+3. `ollama.chat(..., stream=True)` sends both to the local model.
+4. Thinking tokens, if enabled, are printed as they arrive; answer tokens are collected silently.
+5. When generation finishes, the complete answer is printed at once, with the time taken.
+
+---
+
+## Tech Stack
+
+| Component | Choice | Why |
+|---|---|---|
+| Model runtime | [Ollama](https://ollama.com) | One-command install, runs models locally on CPU or GPU |
+| Model | `qwen3.5:4b` (Q4_K_M, 3.3 GB) | Best accuracy/speed balance on CPU in my tests; supports thinking |
+| Client library | `ollama` (Python) | Official, minimal, no abstraction layers |
+| Language | Python 3.10+ | Standard library only, besides `ollama` |
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Python **3.10+**
+- [Ollama](https://ollama.com/download) installed and running
+- **8 GB RAM** minimum (16 GB recommended); **no GPU required**
+- ~4 GB free disk space
+
+### Installation
 
 ```bash
+# 1. Download the model (one time, ~3.3 GB)
+ollama pull qwen3.5:4b
+
+# 2. Clone the repository
 git clone https://github.com/rizwannazir333/ollama-email-english.git
 cd ollama-email-english
-```
 
-**Step 3: create a virtual environment and install the library.**
-
-Windows (PowerShell):
-```powershell
+# 3. Create a virtual environment and install the dependency
 python -m venv .venv
+# Windows
 .venv\Scripts\python -m pip install -r requirements.txt
-```
-
-Mac / Linux:
-```bash
-python3 -m venv .venv
+# macOS / Linux
 .venv/bin/python -m pip install -r requirements.txt
 ```
 
-**Step 4: run it.**
+> The script detects a `.venv` folder next to it and re-launches itself with that interpreter, so
+> `python 1_ollama_email_english.py` works even without activating the environment.
+
+---
+
+## Usage
+
+### Interactive menu
 
 ```bash
 python 1_ollama_email_english.py
@@ -66,173 +122,164 @@ python 1_ollama_email_english.py
 [plain ollama | model: qwen3.5:4b | thinking: off]
 
 1) Draft email   2) Correct English   q) Quit
->
-```
+> 2
+Text to correct:
+> they was going to the shop and buyed some bread
 
-Type `2`, press Enter, then type `she dont like coffee`. After about 20 seconds:
-
-```
 ===== RESULT =====
-Corrected: She doesn't like coffee.
+Corrected: They were going to the shop and bought some bread.
 Changes:
-- dont -> doesn't (third person singular verb)
-- she -> She (sentence case capitalization)
+- they -> They (capitalization for sentence start)
+- was -> were (plural subject agreement)
+- buyed -> bought (irregular past tense)
+(21s)
 ```
 
-> **Good to know:** the script finds the `.venv` folder by itself, so plain `python 1_ollama_email_english.py`
-> works even if you forget to activate the environment.
+### One-line commands
 
----
+```bash
+python 1_ollama_email_english.py email "ask my manager for Friday off for a family event"
+python 1_ollama_email_english.py correct "me and him is going to meeting tomorow"
+python 1_ollama_email_english.py --think correct "me and him is late"     # show reasoning
+python 1_ollama_email_english.py -m llama3.2:3b correct "..."             # choose a model
+```
 
-## 3. Key ideas
+### Options
 
-| Word | Simple meaning |
+| Option | Description |
 |---|---|
-| **LLM** | *Large Language Model*. A program that reads text and writes text. |
-| **Ollama** | A free app that downloads LLMs and runs them **locally** (on your computer). |
-| **Quantized model** | A model whose numbers are stored with fewer bits (here 4-bit, `Q4_K_M`). It becomes **~4× smaller and faster**, with only a small loss in quality. That is why a 4-billion-parameter model fits in 3.3 GB. |
-| **Prompt** | The instructions we give the model. |
-| **System message** | The "job description" for the model, e.g. *"You are a careful English proofreader."* |
-| **User message** | What the user typed, e.g. *"she dont like coffee"*. |
-| **Thinking** | Some models (like Qwen 3.5) can "think out loud" before answering. More accurate, but **much slower** on a CPU. |
-| **Token** | A small piece of a word. Models read and write tokens. Fewer tokens means a faster answer. |
+| `email TEXT` / `correct TEXT` | Run one task and exit (no menu) |
+| `--think` | Stream the model's reasoning live before the result (more accurate, much slower on CPU) |
+| `-m MODEL` | Use a specific Ollama model |
+
+If no model is given, the first installed model from this list is used:
+`qwen3.5:4b` → `llama3.2:3b` → `qwen2.5:3b` → `qwen3.5:latest`.
 
 ---
 
-## 4. The lesson: how the code works
+## Code Walkthrough
 
-Open [`1_ollama_email_english.py`](1_ollama_email_english.py). It is only about 140 lines.
+The whole application lives in [`1_ollama_email_english.py`](1_ollama_email_english.py).
 
-### Step A: two prompts, one for each job
+**1. Prompts define behaviour.** Each task is just a different system prompt:
 
 ```python
 EMAIL_PROMPT   = "You write short, polite, professional emails. ..."
-CORRECT_PROMPT = "You are a careful English proofreader. ..."
+CORRECT_PROMPT = "You are a careful English proofreader. ... Example for 'She goed to the market.': ..."
 ```
 
-The **same code** does both jobs; only the **system prompt** changes. This is the most important idea
-in prompt engineering: *the prompt is the program*.
-
-### Step B: few-shot examples
-
-The correction prompt includes worked examples:
-
-```
-Example for 'She goed to the market.':
-Corrected: She went to the market.
-Changes:
-- goed -> went (irregular past tense)
-```
-
-Small models copy examples very well. Showing the model **what a good answer looks like** is called
-**few-shot prompting**, and it often works better than long instructions.
-
-### Step C: send messages to the model
+**2. One request function for every task:**
 
 ```python
 stream = ollama.chat(
     model=model,
-    messages=[{"role": "system", "content": system},   # the job description
-              {"role": "user", "content": text}],      # what the user typed
-    think=think,                                         # thinking on or off
-    options={"temperature": 0.3, ...},                   # low = more focused answers
-    stream=True,                                         # get the answer piece by piece
-    keep_alive="30m",                                    # keep the model in memory
+    messages=[{"role": "system", "content": system},
+              {"role": "user", "content": text}],
+    think=think,
+    options={"temperature": 0.3, "num_ctx": 4096 if think else 2048,
+             "num_predict": 2500 if think else 500},
+    stream=True,
+    keep_alive="30m",
 )
 ```
 
-### Step D: show thinking live, print the answer at once
+**3. Separate reasoning from the answer while streaming:**
 
 ```python
 for chunk in stream:
     thought = chunk.message.thinking or ""
     if thought:
-        print(thought, end="", flush=True)        # thinking -> print now (grey)
-    answer += chunk.message.content or ""         # answer   -> collect for later
-...
-print("===== RESULT =====")
-print(answer)                                     # the full answer, in one piece
+        print(thought, end="", flush=True)        # reasoning: shown live
+    answer += chunk.message.content or ""         # answer: collected
+print(f"===== RESULT =====\n{answer.strip()}")    # answer: printed once
 ```
 
-Try it with thinking on: `python 1_ollama_email_english.py --think correct "me and him is late"`.
-You will see the model reason step by step (slowly!) before the result.
+---
 
-### What plain Ollama *can't* do easily
+## Performance
 
-Everything here is manual. There is **no memory** (it forgets the last email), **no tools** (it can't
-look up today's date), and the answer is **plain text** that is hard to use in code.
-👉 That is exactly what **[Part 2: LangChain](https://github.com/rizwannazir333/langchain-email-english)** adds.
+Measured on a laptop with an **Intel Core i7-1165G7, 16 GB RAM, no GPU**, Windows 11:
+
+| Task | Model | Thinking | Time |
+|---|---|---|---|
+| Correct one sentence | `qwen3.5:4b` | off | **11–22 s** |
+| Draft an email | `qwen3.5:4b` | off | **~20 s** |
+| Correct one sentence | `llama3.2:3b` | off | 5–25 s (less accurate) |
+| Correct one sentence | `qwen3.5:4b` | on | several minutes |
 
 ---
 
-## 5. Command options
+## Design Decisions
 
-```bash
-python 1_ollama_email_english.py                                   # menu
-python 1_ollama_email_english.py email "ask my manager for Friday off"
-python 1_ollama_email_english.py correct "he go to school yesterday"
-python 1_ollama_email_english.py --think correct "..."             # show thinking (slower)
-python 1_ollama_email_english.py -m llama3.2:3b correct "..."      # use another model
-```
-
-| Option | Meaning |
-|---|---|
-| `--think` | Show the model's thinking live (more accurate, **much slower**) |
-| `-m MODEL` | Use another Ollama model, e.g. `-m llama3.2:3b` |
-
-If you don't choose a model, the script uses the **first installed one** from this list:
-`qwen3.5:4b` → `llama3.2:3b` → `qwen2.5:3b` → `qwen3.5:latest`.
+- **Why a 4B quantized model?** In my comparison, `qwen3.5:4b` corrected *"me and him is going"* to
+  *"He and I are going"*, which smaller 3B models got wrong, while staying fast on a CPU.
+- **Why is thinking off by default?** On a CPU, reasoning can add minutes per answer. It is available
+  on demand with `--think`.
+- **Why print the answer at once instead of streaming it?** The result is easier to read and copy as a
+  complete block, while streaming the reasoning still shows that the model is working.
+- **Why no framework?** To make every step visible. This file is the baseline the LangChain and
+  LangGraph versions are measured against.
 
 ---
 
-## 6. Making it fast on a normal laptop
+## Limitations
 
-Tested on a laptop with **no graphics card** (Intel i7, 16 GB RAM): **about 15–30 seconds per answer**.
-
-| Trick | Why it helps |
-|---|---|
-| **Quantized 4B model** | Small enough for a CPU, still good at grammar |
-| **Thinking off by default** | Thinking can take *minutes* on a CPU |
-| **Small context** (`num_ctx=2048`) | Less memory to process means faster answers |
-| **Short answers** (`num_predict`) | The model stops sooner |
-| **`keep_alive="30m"`** + loading at start-up | The model stays in memory, so no waiting to load |
-
-> **Honest note:** small models make mistakes. They sometimes add a sentence you didn't ask for
-> (*"I will ensure my tasks are completed"*). **Always read an AI email before you send it.**
+- Small models occasionally add content that wasn't requested (e.g. *"I will ensure my tasks are
+  completed"*). **Always review an AI-written email before sending it.**
+- The answer format is plain text, so other programs can't easily consume it.
+  (Part 2 solves this with structured output.)
+- No memory between requests, and no tool use (e.g. it can't look up today's date).
 
 ---
 
-## 7. Exercises
+## Extend It
 
-1. Add a third menu option: **"Summarise text"** with its own system prompt.
-2. Add a new example to `CORRECT_PROMPT`, e.g. *"I has two cat."* → *"I have two cats."*
-3. Make every email end with *"Kind regards"*.
-4. Change `temperature` from `0.3` to `1.0`. Run the same email 3 times. What changes?
-5. Compare `qwen3.5:4b` and `llama3.2:3b` on 5 sentences. Which is faster? Which is more accurate?
+Ideas for learners who want to build on this project:
+
+1. Add a **"Summarise text"** task with its own system prompt.
+2. Add more few-shot examples (e.g. *"I has two cat."* → *"I have two cats."*) and measure the effect.
+3. Experiment with `temperature` (0.0 vs 1.0) and compare outputs.
+4. Benchmark different models on the same 10 sentences for speed and accuracy.
 
 ---
 
-## 8. Troubleshooting
+## Troubleshooting
 
-| Problem | Fix |
+| Problem | Solution |
 |---|---|
 | `model "qwen3.5:4b" not found` | Run `ollama pull qwen3.5:4b` |
-| `Connection refused` / cannot connect | Start the Ollama app (or run `ollama serve`) |
-| `ModuleNotFoundError: No module named 'ollama'` | Do [Setup step 3](#2-setup-10-minutes) |
-| The menu seems to do nothing | Type the **number** first (`1` or `2`), press Enter, *then* your text |
-| Very slow (minutes) | Close other programs, don't use `--think`, check `ollama ps` |
-| Strange codes like `[90m` | Use Windows Terminal or the VS Code terminal (they support colours) |
+| `Connection refused` | Start the Ollama app, or run `ollama serve` |
+| `ModuleNotFoundError: No module named 'ollama'` | Complete the installation step |
+| Menu appears unresponsive | Enter the option number first (`1` or `2`), then your text |
+| Very slow responses | Avoid `--think`, close heavy applications, run one model at a time (`ollama ps`) |
 
 ---
 
-## Files
+## Project Structure
 
 ```
-.
-├── 1_ollama_email_english.py   # the app
-├── requirements.txt            # Python library (tested version)
-├── .gitignore                  # keeps .venv and cache files out of Git
-└── README.md                   # this lesson
+ollama-email-english/
+├── 1_ollama_email_english.py   # the application
+├── requirements.txt            # pinned dependency
+├── .gitignore
+└── README.md
 ```
 
-**Next:** [Part 2: the same app with LangChain](https://github.com/rizwannazir333/langchain-email-english)
+---
+
+## Continue the Series
+
+| Part | Repository | What it adds |
+|---|---|---|
+| **1** | **ollama-email-english** (you are here) | Direct model access, prompting, streaming |
+| 2 | [langchain-email-english](https://github.com/rizwannazir333/langchain-email-english) | Prompt templates, chains, structured output, memory, tools, agents |
+| 3 | [langgraph-email-english](https://github.com/rizwannazir333/langgraph-email-english) | Graph workflows, self-review loops, human approval, parallelism, caching |
+
+---
+
+## Author
+
+Created and maintained by **[@rizwannazir333](https://github.com/rizwannazir333)**.
+
+If this project helped you learn, please consider giving it a ⭐. Questions, suggestions and
+improvements are welcome through [Issues](https://github.com/rizwannazir333/ollama-email-english/issues).

@@ -31,6 +31,7 @@ for _VENV in (os.path.join(_HERE, ".venv"), os.path.join(os.path.dirname(_HERE),
         break
 
 import argparse
+import re
 import time
 
 import ollama
@@ -65,6 +66,24 @@ CORRECT_PROMPT = (
     "- Me and him -> He and I (subject pronouns)\n"
     "- was -> were (plural subject)"
 )
+
+
+# Guardrail: small models like to add promises the user never asked for, such as
+# "I will ensure my tasks are completed". Remove those sentences in plain Python
+# (instant, no extra model call) - unless the user's own request mentioned them.
+PROMISES = ("i will ensure", "i'll ensure", "i will make sure", "i'll make sure",
+            "will be available", "remain available", "hand over", "handover")
+
+
+def remove_unrequested_promises(email: str, request: str) -> str:
+    banned = [p for p in PROMISES if p not in request.lower()]
+    lines = []
+    for line in email.splitlines():
+        sentences = re.split(r"(?<=[.!?])\s+", line)
+        kept = [s for s in sentences if not any(p in s.lower() for p in banned)]
+        if kept or not line.strip():          # drop lines that became empty
+            lines.append(" ".join(kept))
+    return "\n".join(lines)
 
 
 def pick_model() -> str:
@@ -103,6 +122,8 @@ def ask(model: str, think: bool, system: str, text: str) -> str:
     if thinking:
         print(f"\n----- thinking done -----{RESET}")
 
+    if system == EMAIL_PROMPT:
+        answer = remove_unrequested_promises(answer, text)
     print(f"\n{BOLD}===== RESULT ====={RESET}\n{answer.strip()}")
     print(f"{GREY}({time.time() - start:.0f}s){RESET}")
     return answer

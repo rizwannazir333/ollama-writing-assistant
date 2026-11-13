@@ -37,6 +37,7 @@ what each framework adds.
 ## Key Features
 
 - **100% local and private:** runs on Ollama, works offline, no data sent to third parties.
+- **Email guardrail:** removes promises the model invents (e.g. *"I will ensure my tasks are completed"*).
 - **CPU-friendly:** uses a 4-bit quantized 4B model (`qwen3.5:4b`, Q4_K_M) that runs on an ordinary laptop with no GPU.
 - **Two tasks, one function:** both tasks share the same request logic; only the system prompt changes.
 - **Few-shot prompting:** worked examples inside the prompt make a small model noticeably more accurate.
@@ -213,6 +214,10 @@ Measured on a laptop with an **Intel Core i7-1165G7, 16 GB RAM, no GPU**, Window
 
 ## Design Decisions
 
+- **A plain-Python guardrail for emails:** small models like to add promises nobody asked for
+  (*"I will ensure my tasks are completed"*). `remove_unrequested_promises()` deletes those
+  sentences unless the request itself mentions them: instant, predictable and free, with no
+  extra model call.
 - **Why a 4B quantized model?** In my comparison, `qwen3.5:4b` corrected *"me and him is going"* to
   *"He and I are going"*, which smaller 3B models got wrong, while staying fast on a CPU.
 - **Why is thinking off by default?** On a CPU, reasoning can add minutes per answer. It is available
@@ -226,8 +231,8 @@ Measured on a laptop with an **Intel Core i7-1165G7, 16 GB RAM, no GPU**, Window
 
 ## Limitations
 
-- Small models occasionally add content that wasn't requested (e.g. *"I will ensure my tasks are
-  completed"*). **Always review an AI-written email before sending it.**
+- Small models can still make mistakes. The guardrail removes the most common one (invented
+  promises), but **always review an AI-written email before sending it.**
 - The answer format is plain text, so other programs can't easily consume it.
   (Part 2 solves this with structured output.)
 - No memory between requests, and no tool use (e.g. it can't look up today's date).

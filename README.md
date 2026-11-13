@@ -1,4 +1,4 @@
-# Ollama Writing Assistant
+# Ollama Writing Assistant: AI Email Drafting & English Grammar Correction
 
 **A private, offline AI writing assistant that drafts professional emails and corrects English grammar, built with plain Ollama in a single Python file.**
 

@@ -1,5 +1,6 @@
 """
-Ollama Writing Assistant (Part 1 of 3: plain Ollama, no framework)
+Ollama Writing Assistant: AI Email Drafting & English Grammar Correction
+   (Part 1 of 3: plain Ollama, no framework)
    Drafts professional emails and corrects English grammar.
    Runs 100% on your computer with a 4-bit quantized model. No external API.
 

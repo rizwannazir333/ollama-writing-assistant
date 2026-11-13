@@ -51,7 +51,7 @@ what each framework adds.
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant A as 1_ollama_email_english.py
+    participant A as ollama_email_english.py
     participant O as Ollama (local)
     U->>A: "she dont like coffee"
     A->>O: system prompt (proofreader + examples) + user text
@@ -107,7 +107,7 @@ python -m venv .venv
 ```
 
 > The script detects a `.venv` folder next to it and re-launches itself with that interpreter, so
-> `python 1_ollama_email_english.py` works even without activating the environment.
+> `python ollama_email_english.py` works even without activating the environment.
 
 ---
 
@@ -116,7 +116,7 @@ python -m venv .venv
 ### Interactive menu
 
 ```bash
-python 1_ollama_email_english.py
+python ollama_email_english.py
 ```
 
 ```
@@ -139,10 +139,10 @@ Changes:
 ### One-line commands
 
 ```bash
-python 1_ollama_email_english.py email "ask my manager for Friday off for a family event"
-python 1_ollama_email_english.py correct "me and him is going to meeting tomorow"
-python 1_ollama_email_english.py --think correct "me and him is late"     # show reasoning
-python 1_ollama_email_english.py -m llama3.2:3b correct "..."             # choose a model
+python ollama_email_english.py email "ask my manager for Friday off for a family event"
+python ollama_email_english.py correct "me and him is going to meeting tomorow"
+python ollama_email_english.py --think correct "me and him is late"     # show reasoning
+python ollama_email_english.py -m llama3.2:3b correct "..."             # choose a model
 ```
 
 ### Options
@@ -160,7 +160,7 @@ If no model is given, the first installed model from this list is used:
 
 ## Code Walkthrough
 
-The whole application lives in [`1_ollama_email_english.py`](1_ollama_email_english.py).
+The whole application lives in [`ollama_email_english.py`](ollama_email_english.py).
 
 **1. Prompts define behaviour.** Each task is just a different system prompt:
 
@@ -260,11 +260,11 @@ Ideas for learners who want to build on this project:
 
 ```
 ollama-email-english/
-├── 1_ollama_email_english.py   # the application
+├── ollama_email_english.py     # the application
 ├── requirements.txt            # pinned dependency
-├── .gitignore
-├── LICENSE                        # MIT License
-└── README.md
+├── .gitignore                  # keeps .venv and caches out of Git
+├── LICENSE                     # MIT License
+└── README.md                   # this document
 ```
 
 ---

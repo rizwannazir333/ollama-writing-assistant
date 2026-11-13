@@ -2,6 +2,7 @@
 
 **A private, offline AI writing assistant that drafts professional emails and corrects English grammar, built with plain Ollama in a single Python file.**
 
+[![CI](https://github.com/rizwannazir333/ollama-email-english/actions/workflows/ci.yml/badge.svg)](https://github.com/rizwannazir333/ollama-email-english/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![Ollama](https://img.shields.io/badge/Ollama-local%20LLM-000000)
 ![Model](https://img.shields.io/badge/model-qwen3.5%3A4b%20(Q4__K__M)-6E40C9)
